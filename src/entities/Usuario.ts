@@ -22,4 +22,22 @@ export class Usuario {
   email: string
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   date_cadastro: Date
+
+  constructor(
+    name: string,
+    date_nasc: Date,
+    cpf: number,
+    rg: number,
+    username: string,
+    password: string,
+    email: string,
+  ) {
+    this.name = name
+    this.date_nasc = date_nasc
+    this.cpf = cpf
+    this.rg = rg
+    this.username = username
+    this.password = password
+    this.email = email
+  }
 }
