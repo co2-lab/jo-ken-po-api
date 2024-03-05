@@ -6,6 +6,7 @@ const routes = Router()
 
 routes.post('/usuario', new UsuarioController().create)
 routes.post('/desafio', new DesafioController().create)
-routes.post('/desafio/1', new DesafioController().create1)
+routes.post('/aceitarDesafio', new DesafioController().aceitarDesafio)
+routes.get('/listarDesafios', new DesafioController().listarDesafios)
 
 export default routes
