@@ -7,10 +7,10 @@ export class Desafio {
   id: number
 
   @Column({ type: 'text' })
-  esolhaDoUsuarioCriador: Usuario
+  esolhaDoUsuarioCriador: string
 
   @Column({ type: 'text', nullable: true })
-  escolhaDoUsuarioAceitou: Usuario
+  escolhaDoUsuarioAceitou: string
 
   @ManyToOne(() => Usuario, usuario => usuario.id)
   @JoinColumn({ name: 'id_criador' })
@@ -19,6 +19,9 @@ export class Desafio {
   @ManyToOne(() => Usuario, usuario => usuario.id)
   @JoinColumn({ name: 'id_acetou' })
   usuarioAceitou: Usuario
+
+  @Column({ type: 'text', nullable: true })
+  resultado: string
 
   constructor() {}
 }

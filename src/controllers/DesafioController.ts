@@ -4,24 +4,26 @@ import { usuarioRepository } from '../repositories/usuarioRepository'
 import { Desafio } from '../entities/Desafio'
 
 export class DesafioController {
-  async listarDesafios() {
+  async listarDesafios(): Promise<Desafio[]> {
     const desafios = await findAll()
     return desafios
   }
 
   async create(req: Request, res: Response) {
-    const { id, escolhaDoUsuarioCriador } = req.body
+    const { id, escolhaDoUsuarioCriador, escolhaDoUsuarioAceitou } = req.body
     console.log(id)
     try {
       const newUsuario = await findUsuario(id)
       console.log(newUsuario)
+
       let desafio = new Desafio()
       if (newUsuario != null) {
         desafio.usuarioCriador = newUsuario
         desafio.esolhaDoUsuarioCriador = escolhaDoUsuarioCriador
-        desafio = await desafioRepository.save(desafio)
-        return res.status(201).json({ message: 'Desafio Criado' })
       }
+
+      desafio = await desafioRepository.save(desafio)
+      return res.status(201).json({ message: 'Desafio Criado' })
     } catch (error) {
       console.log(error)
       return res.status(500).json({ message: 'Internal Server Error' })
@@ -34,12 +36,33 @@ export class DesafioController {
     try {
       const newUsuario = await findUsuario(idAceitou)
       console.log(newUsuario)
+
       let desafio = await findDesafio(idDesafio)
+      let pedra = 'Pedra'
+      let tesoura = 'Tesoura'
+      let papel = 'Papel'
+      let empate = 'Empate'
+      console.log(desafio)
       if (newUsuario != null && desafio != null) {
         desafio.usuarioAceitou = newUsuario
         desafio.escolhaDoUsuarioAceitou = escolhaDoUsuarioAceitou
-        desafio = await desafioRepository.save(desafio)
-        return res.status(201).json({ message: 'Desafio Aceito' })
+        if (desafio.esolhaDoUsuarioCriador === desafio.escolhaDoUsuarioAceitou) {
+          desafio.resultado = empate
+          desafio = await desafioRepository.save(desafio)
+          return res.status(201).json(desafio)
+        } else if (
+          (desafio.esolhaDoUsuarioCriador == pedra && escolhaDoUsuarioAceitou == tesoura) ||
+          (desafio.esolhaDoUsuarioCriador == tesoura && escolhaDoUsuarioAceitou == papel) ||
+          (desafio.esolhaDoUsuarioCriador == papel && escolhaDoUsuarioAceitou == pedra)
+        ) {
+          desafio.resultado = desafio.esolhaDoUsuarioCriador
+          desafio = await desafioRepository.save(desafio)
+          return res.status(201).json(desafio)
+        } else {
+          desafio.resultado = escolhaDoUsuarioAceitou
+          desafio = await desafioRepository.save(desafio)
+          return res.status(201).json(desafio)
+        }
       }
     } catch (error) {
       console.log(error)
@@ -71,6 +94,6 @@ async function findDesafio(id: number) {
 }
 
 async function findAll(): Promise<Desafio[]> {
-  const desafios = await desafioRepository.createQueryBuilder('desafio').getMany()
+  const desafios: Desafio[] = await desafioRepository.createQueryBuilder('desafios').getMany()
   return desafios
 }
