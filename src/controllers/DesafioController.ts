@@ -1,14 +1,9 @@
+import { desafioRepository } from './../repositories/desafioRepository'
+import { usuarioRepository } from './../repositories/usuarioRepository'
 import { Request, Response } from 'express'
-import { desafioRepository } from '../repositories/desafioRepository'
-import { usuarioRepository } from '../repositories/usuarioRepository'
 import { Desafio } from '../entities/Desafio'
 
 export class DesafioController {
-  async listarDesafios(): Promise<Desafio[]> {
-    const desafios = await findAll()
-    return desafios
-  }
-
   async create(req: Request, res: Response) {
     const { id, escolhaDoUsuarioCriador, escolhaDoUsuarioAceitou } = req.body
     console.log(id)
@@ -91,9 +86,4 @@ async function findDesafio(id: number) {
   } catch (error) {
     console.error('Erro ao Buscar Desafio', error)
   }
-}
-
-async function findAll(): Promise<Desafio[]> {
-  const desafios: Desafio[] = await desafioRepository.createQueryBuilder('desafios').getMany()
-  return desafios
 }
