@@ -1,6 +1,4 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
-import { Desafio } from './Desafio'
-import { Double } from 'mongodb'
 
 @Entity('usuarios')
 export class Usuario {

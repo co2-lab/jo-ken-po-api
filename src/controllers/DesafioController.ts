@@ -25,6 +25,11 @@ export class DesafioController {
     }
   }
 
+  async buscarDesafios(request: Request, response: Response) {
+    const desafios = await execute()
+    return response.json(desafios)
+  }
+
   async aceitarDesafio(req: Request, res: Response) {
     const { idAceitou, idDesafio, escolhaDoUsuarioAceitou } = req.body
     console.log(idAceitou)
@@ -86,4 +91,10 @@ async function findDesafio(id: number) {
   } catch (error) {
     console.error('Erro ao Buscar Desafio', error)
   }
+}
+
+async function execute() {
+  const repo = desafioRepository
+  const desafios = await repo.find()
+  return desafios
 }
