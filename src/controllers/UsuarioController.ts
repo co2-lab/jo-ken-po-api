@@ -7,13 +7,16 @@ import jwt from "jsonwebtoken";
 export class UsuarioController {
   async create(req: Request, res: Response) {
     const { name, date_nasc, cpf, rg, username, password, email } = req.body;
+
+    const salt = await bcrypt.genSalt(12);
+    const passwordHash = await bcrypt.hash(password, salt);
     let usuario: Usuario = new Usuario(
       name,
       date_nasc,
       cpf,
       rg,
       username,
-      password,
+      passwordHash,
       email
     );
 
