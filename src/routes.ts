@@ -7,17 +7,13 @@ const routes = Router();
 
 routes.post("/usuario", new UsuarioController().create);
 routes.post("/usuario/autenticar", new UsuarioController().autenticar);
-routes.post("/desafio", checkToken, new DesafioController().create);
+routes.post("/desafio", new DesafioController().create);
 routes.post(
   "/aceitarDesafio",
   checkToken,
   new DesafioController().aceitarDesafio
 );
-routes.get(
-  "/buscarDesafios",
-  checkToken,
-  new DesafioController().buscarDesafios
-);
+routes.get("/buscarDesafios", new DesafioController().buscarDesafios);
 
 function checkToken(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers["authorization"];

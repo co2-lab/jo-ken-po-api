@@ -6,7 +6,7 @@ import { Desafio } from "../entities/Desafio";
 export class DesafioController {
   async create(req: Request, res: Response) {
     const { id, escolhaDoUsuarioCriador } = req.body;
-    console.log(id);
+    console.log(id, escolhaDoUsuarioCriador);
     try {
       const newUsuario = await findUsuario(id);
       console.log(newUsuario);
