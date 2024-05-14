@@ -98,6 +98,9 @@ async function findDesafio(id: number) {
   }
 }
 
+
+
+
 async function execute() {
   const repo = desafioRepository;
   const desafios = await repo.find();
