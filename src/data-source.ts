@@ -23,3 +23,5 @@ export const findById = async (id: number) => {
     return null
   }
 }
+
+console.log('passei Aqui')
