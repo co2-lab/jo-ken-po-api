@@ -1,25 +1,32 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { Desafio } from './Desafio'
 
 @Entity('usuarios')
 export class Usuario {
   @PrimaryGeneratedColumn()
-  id: number
+  id!: number
   @Column({ type: 'text' })
-  name: string
+  name!: string
   @Column({ type: 'date' })
-  date_nasc: Date
+  date_nasc!: Date
   @Column({ type: 'double precision', unique: true })
-  cpf: number
+  cpf!: number
   @Column({ type: 'double precision', unique: true })
-  rg: number
+  rg!: number
   @Column({ type: 'text', unique: true })
-  username: string
+  username!: string
   @Column({ type: 'text' })
-  password: string
+  password!: string
   @Column({ type: 'text', unique: true })
-  email: string
+  email!: string
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  date_cadastro: Date
+  date_cadastro!: Date
+
+  @OneToMany(() => Desafio, desafio => desafio.usuarioCriador)
+  desafiosCriados!: Desafio[]
+
+  @OneToMany(() => Desafio, desafio => desafio.usuarioAceitou)
+  desafiosAceitos!: Desafio[]
 
   constructor(
     name: string,

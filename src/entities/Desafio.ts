@@ -1,36 +1,30 @@
-import { Usuario } from "./Usuario";
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { Usuario } from './Usuario'
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 
-@Entity("desafios")
+@Entity('desafios')
 export class Desafio {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number
 
-  @Column({ type: "text" })
-  esolhaDoUsuarioCriador: string;
+  @Column({ type: 'text' })
+  esolhaDoUsuarioCriador!: string
 
-  @Column({ type: "text", nullable: true })
-  nome: string;
+  @Column({ type: 'text', nullable: true })
+  nome?: string
 
-  @Column({ type: "text", nullable: true })
-  escolhaDoUsuarioAceitou: string;
+  @Column({ type: 'text', nullable: true })
+  escolhaDoUsuarioAceitou?: string
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.id)
-  @JoinColumn({ name: "id_criador" })
-  usuarioCriador: Usuario;
+  @ManyToOne(() => Usuario, usuario => usuario.id)
+  @JoinColumn({ name: 'id_criador' })
+  usuarioCriador: Usuario
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.id)
-  @JoinColumn({ name: "id_acetou" })
-  usuarioAceitou: Usuario;
+  @ManyToOne(() => Usuario, usuario => usuario.id)
+  @JoinColumn({ name: 'id_acetou' })
+  usuarioAceitou: Usuario
 
-  @Column({ type: "text", nullable: true })
-  resultado: string;
+  @Column({ type: 'text', nullable: true })
+  resultado: string
 
   constructor() {}
 }

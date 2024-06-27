@@ -1,76 +1,79 @@
 import { Request, Response } from 'express'
 import { usuarioRepository } from '../repositories/usuarioRepository'
 import { Usuario } from '../entities/Usuario'
-import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt' // Adicionar bcrypt para hash de senha
 
 export class UsuarioController {
-  async create(req: Request, res: Response) {
-    const { name, date_nasc, cpf, rg, username, password, email } = req.body
-
-    const salt = await bcrypt.genSalt(12)
-    const passwordHash = await bcrypt.hash(password, salt)
-    let usuario: Usuario = new Usuario(name, date_nasc, cpf, rg, username, passwordHash, email)
+  async create(req: Request, res: Response): Promise<void> {
+    const { name, date_nasc, cpf, rg, username, password, email } = req.body as {
+      name: string
+      date_nasc: string // Assume que date_nasc é uma string do request
+      cpf: number
+      rg: number
+      username: string
+      password: string
+      email: string
+    }
 
     try {
-      if (usuario != null) {
-        usuario = await usuarioRepository.save(usuario)
-        console.log(usuario)
-      }
-      return res.status(201).json(usuario)
+      const hashedPassword = await bcrypt.hash(password, 10) // Gerar hash da senha
+      const usuario = new Usuario(
+        name,
+        new Date(date_nasc),
+        cpf,
+        rg,
+        username,
+        hashedPassword,
+        email,
+      )
+
+      const savedUsuario = await usuarioRepository.save(usuario)
+      // Remove a senha do objeto antes de enviar a resposta
+      const { password: omitPassword, ...responseUsuario } = savedUsuario
+      res.status(201).json(responseUsuario)
     } catch (error) {
-      console.log(error)
-      return res.status(500).json({ message: 'Internal Server Error' })
+      console.error('Erro ao criar usuário:', error)
+      res.status(500).json({ message: 'Internal Server Error' })
     }
   }
-  async autenticar(req: Request, res: Response) {
-    const { email, password } = req.body
+
+  async autenticar(req: Request, res: Response): Promise<Response> {
+    const { email, password } = req.body as { email: string; password: string }
     const secret = 'teste123'
-    if (!email) {
-      return res.status(422).json({ msg: 'o email é obrigatorio' })
-    }
-    if (!password) {
-      return res.status(422).json({ msg: 'o password é obrigatorio' })
-    }
 
-    //buscar no banco e validar tanto usuario
-    const usuario = await findUsuario(email)
-    console.log(usuario)
-    const checkPassword = null
-    if (usuario != null) {
-      const checkPassword = await bcrypt.compare(password, usuario.password)
+    try {
+      if (!email || !password) {
+        return res.status(422).json({ msg: 'Email e senha são obrigatórios' })
+      }
 
-      if (checkPassword == null) {
+      const usuario = await findUsuario(email)
+      if (!usuario) {
+        return res.status(404).json({ msg: 'Usuário não encontrado' })
+      }
+
+      const passwordMatch = await bcrypt.compare(password, usuario.password) // Comparar hashes de senha
+      if (!passwordMatch) {
         return res.status(422).json({ msg: 'Senha incorreta' })
       }
 
-      try {
-        const token = jwt.sign(
-          {
-            id: usuario.id,
-          },
-          secret,
-        )
-        res.status(200).json({ msg: 'Autenticacao realizada com sucesso', token })
-      } catch (error) {
-        console.log(error)
-        res.status(500).json({
-          msg: error,
-        })
-      }
-    } else {
-      return res.status(422).json({ msg: 'Usuario Não Encontrado' })
+      const token = jwt.sign({ id: usuario.id }, secret)
+      return res.status(200).json({ msg: 'Autenticação realizada com sucesso', token })
+    } catch (error) {
+      console.error('Erro ao autenticar usuário:', error)
+      return res.status(500).json({ msg: 'Internal Server Error' })
     }
   }
 }
 
-async function findUsuario(email: string) {
+async function findUsuario(email: string): Promise<Usuario | null> {
   try {
     return await usuarioRepository
       .createQueryBuilder('usuarios')
       .where('usuarios.email = :email', { email })
       .getOne()
   } catch (error) {
-    console.error('Erro ao Informar  usuário:', error)
+    console.error('Erro ao buscar usuário:', error)
+    return null
   }
 }
