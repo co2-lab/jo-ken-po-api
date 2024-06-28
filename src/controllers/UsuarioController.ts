@@ -28,6 +28,8 @@ export class UsuarioController {
         email,
       )
 
+      usuario.moeda = 1000
+
       const savedUsuario = await usuarioRepository.save(usuario)
       // Remove a senha do objeto antes de enviar a resposta
       const { password: omitPassword, ...responseUsuario } = savedUsuario

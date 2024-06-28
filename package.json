@@ -28,6 +28,7 @@
     "mongodb": "^6.4.0",
     "pg": "^8.11.5",
     "reflect-metadata": "^0.2.1",
+    "ts-node": "^10.9.2",
     "typeorm": "^0.3.20"
   }
 }

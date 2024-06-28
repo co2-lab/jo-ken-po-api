@@ -24,7 +24,10 @@ export class Desafio {
   usuarioAceitou: Usuario
 
   @Column({ type: 'text', nullable: true })
-  resultado: string
+  resultado?: string
+
+  @Column({ type: 'decimal', nullable: true })
+  valorDaAposta?: number
 
   constructor() {}
 }

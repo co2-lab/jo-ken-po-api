@@ -22,6 +22,9 @@ export class Usuario {
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   date_cadastro!: Date
 
+  @Column({ type: 'double precision', default: 1000 })
+  moeda!: number
+
   @OneToMany(() => Desafio, desafio => desafio.usuarioCriador)
   desafiosCriados!: Desafio[]
 
@@ -44,5 +47,6 @@ export class Usuario {
     this.username = username
     this.password = password
     this.email = email
+    this.moeda = 1000
   }
 }
