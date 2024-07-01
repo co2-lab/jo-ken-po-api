@@ -75,3 +75,18 @@ Adiciona o campo moeda com um valor numérico e um valor padrão de 1000.
 
 Adiciona uma rota POST /usuarios para criar novos usuários.
 
+
+16 -Adicionei ESLint com padrão Standard
+17-AdicioneiPrettier e configurou formatação
+18-AdicioneiTypecheck ao projeto
+19-AdicioneiHusky para hooks de Git
+20-AdicioneiCommitizen e Commitlint com configuração de commits padrão
+21-Adicionei.editorconfig para configuração de estilo de código
+22-Adicioneiarquivos de configuração do TypeORM
+23-Adicioneivalidação e máscara de CPF e data de nascimento no back-end
+24-Atualizei repositório e as entidades com novas funcionalidades
+25-Adicionou comandos de migração ao TypeORM
+26-Configurei .cz-config.js para Commitizen
+
+
+
