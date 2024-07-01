@@ -1,11 +1,13 @@
+/* eslint-disable eqeqeq */
 import { Usuario } from './../entities/Usuario'
 import { desafioRepository } from './../repositories/desafioRepository'
 import { usuarioRepository } from './../repositories/usuarioRepository'
 import { Request, Response } from 'express'
 import { Desafio } from '../entities/Desafio'
+import { Messages } from '../messagens'
 
 export class DesafioController {
-  async create(req: Request, res: Response): Promise<Response> {
+  async create (req: Request, res: Response): Promise<Response> {
     const { id, escolhaDoUsuarioCriador, valorDaAposta } = req.body
     console.log(id, escolhaDoUsuarioCriador, valorDaAposta)
 
@@ -23,28 +25,28 @@ export class DesafioController {
       }
 
       desafio = await desafioRepository.save(desafio)
-      return res.status(201).json({ message: 'Desafio Criado' })
+      return res.status(201).json({ message: Messages.CHALLENGE_CREATED })
     } catch (error) {
       console.log(error)
-      return res.status(500).json({ message: 'Internal Server Error' })
+      return res.status(500).json({ message: Messages.INTERNAL_SERVER_ERROR })
     }
   }
 
-  async consultarApostasPorUsuario(
+  async consultarApostasPorUsuario (
     req: Request,
-    res: Response,
+    res: Response
   ): Promise<Response> {
     const { userId } = req.params
     try {
       const usuario = await findUsuario(parseInt(userId))
       if (!usuario) {
-        return res.status(404).json({ message: 'Usuário não encontrado' })
+        return res.status(404).json({ message: Messages.USER_NOT_FOUND })
       }
       const apostasCriadas = await desafioRepository.find({
-        where: { usuarioCriador: usuario },
+        where: { usuarioCriador: usuario }
       })
       const apostasAceitas = await desafioRepository.find({
-        where: { usuarioAceitou: usuario },
+        where: { usuarioAceitou: usuario }
       })
 
       const todasApostas = { ...apostasCriadas, ...apostasAceitas }
@@ -52,11 +54,11 @@ export class DesafioController {
       return res.status(200).json(todasApostas)
     } catch (error) {
       console.log(error)
-      return res.status(500).json({ message: 'Internal Server Error' })
+      return res.status(500).json({ message: Messages.INTERNAL_SERVER_ERROR })
     }
   }
 
-  async usuarioComMaisApostas(req: Request, res: Response): Promise<Response> {
+  async usuarioComMaisApostas (req: Request, res: Response): Promise<Response> {
     try {
       const usuarios = await usuarioRepository.find()
       let maxApostas = 0
@@ -64,10 +66,10 @@ export class DesafioController {
 
       for (const usuario of usuarios) {
         const apostasCriadas = await desafioRepository.count({
-          where: { usuarioCriador: usuario },
+          where: { usuarioCriador: usuario }
         })
         const apostasAceitas = await desafioRepository.count({
-          where: { usuarioAceitou: usuario },
+          where: { usuarioAceitou: usuario }
         })
         const totalApostas = apostasCriadas + apostasAceitas
 
@@ -77,19 +79,17 @@ export class DesafioController {
         }
       }
       if (usuarioComMaisApostas) {
-        return res
-          .status(200)
-          .json({ usuario: usuarioComMaisApostas, apostas: maxApostas })
+        return res.status(200).json({ usuario: usuarioComMaisApostas, apostas: maxApostas })
       } else {
-        return res.status(404).json({ message: 'Nenhum usuário Encontrado' })
+        return res.status(404).json({ message: Messages.NO_USERS_FOUND })
       }
     } catch (error) {
       console.log(error)
-      return res.status(500).json({ message: 'Internal Server Error' })
+      return res.status(500).json({ message: Messages.INTERNAL_SERVER_ERROR })
     }
   }
 
-  async maioresApostas(req: Request, res: Response): Promise<Response> {
+  async maioresApostas (req: Request, res: Response): Promise<Response> {
     try {
       const desafios = await desafioRepository
         .createQueryBuilder('desafio')
@@ -100,22 +100,22 @@ export class DesafioController {
       if (desafios.length > 0) {
         return res.status(200).json(desafios)
       } else {
-        return res.status(404).json({ message: 'Nenhuma Aposta encontrada' })
+        return res.status(404).json({ message: Messages.NO_BETS_FOUND })
       }
     } catch (error) {
       console.log(error)
-      return res.status(500).json({ message: 'Internal Server Error' })
+      return res.status(500).json({ message: Messages.INTERNAL_SERVER_ERROR })
     }
   }
 
-  async maioresGanhadores(req: Request, res: Response): Promise<Response> {
+  async maioresGanhadores (req: Request, res: Response): Promise<Response> {
     try {
       const usuarios = await usuarioRepository.find()
       const ganhadores: { usuario: Usuario; vitorias: number }[] = []
 
       for (const usuario of usuarios) {
         const vitorias = await desafioRepository.count({
-          where: { resultado: usuario.id.toString() },
+          where: { resultado: usuario.id.toString() }
         })
         if (vitorias > 0) {
           ganhadores.push({ usuario, vitorias })
@@ -127,26 +127,25 @@ export class DesafioController {
       return res.status(200).json(maioresGanhadores)
     } catch (error) {
       console.log(error)
-      return res.status(500).json({ message: 'Internal Server Error' })
+      return res.status(500).json({ message: Messages.INTERNAL_SERVER_ERROR })
     }
   }
 
-  async buscarDesafios(
+  async buscarDesafios (
     request: Request,
-    response: Response,
+    response: Response
   ): Promise<Response> {
     try {
       const desafios = await execute()
       return response.json(desafios)
     } catch (error) {
       console.log(error)
-      return response.status(500).json({ message: 'interna Server Error' })
+      return response.status(500).json({ message: Messages.INTERNAL_SERVER_ERROR })
     }
   }
 
-  async aceitarDesafio(req: Request, res: Response): Promise<Response> {
-    const { idAceitou, idDesafio, escolhaDoUsuarioAceitou, valorDaAposta } =
-      req.body
+  async aceitarDesafio (req: Request, res: Response): Promise<Response> {
+    const { idAceitou, idDesafio, escolhaDoUsuarioAceitou, valorDaAposta } = req.body
     console.log(idAceitou)
 
     try {
@@ -155,10 +154,10 @@ export class DesafioController {
       console.log(newUsuario)
 
       let desafio = await findDesafio(idDesafio)
-      let pedra = 'Pedra'
-      let tesoura = 'Tesoura'
-      let papel = 'Papel'
-      let empate = 'Empate'
+      const pedra = 'Pedra'
+      const tesoura = 'Tesoura'
+      const papel = 'Papel'
+      const empate = 'Empate'
       console.log(desafio)
 
       if (newUsuario != null && desafio != null) {
@@ -167,27 +166,22 @@ export class DesafioController {
 
         if (!verificarvalorAposta(desafio, valorDaAposta, res)) {
           return res.status(400).json({
-            message: 'O valor da Aposta não Corresponde ao valor Original',
+            message: Messages.BET_NOT_MATCH
           })
         }
 
         if (desafio.valorDaAposta !== valorDaAposta) {
           return res.status(400).json({
-            message: ' O valor da Aposta não corresponde ao valor Original',
+            message: Messages.BET_NOT_MATCH
           })
         }
 
-        if (
-          desafio.esolhaDoUsuarioCriador === desafio.escolhaDoUsuarioAceitou
-        ) {
+        if (desafio.esolhaDoUsuarioCriador === desafio.escolhaDoUsuarioAceitou) {
           desafio.resultado = empate
         } else if (
-          (desafio.esolhaDoUsuarioCriador == pedra &&
-            escolhaDoUsuarioAceitou == tesoura) ||
-          (desafio.esolhaDoUsuarioCriador == tesoura &&
-            escolhaDoUsuarioAceitou == papel) ||
-          (desafio.esolhaDoUsuarioCriador == papel &&
-            escolhaDoUsuarioAceitou == pedra)
+          (desafio.esolhaDoUsuarioCriador == pedra && escolhaDoUsuarioAceitou == tesoura) ||
+          (desafio.esolhaDoUsuarioCriador == tesoura && escolhaDoUsuarioAceitou == papel) ||
+          (desafio.esolhaDoUsuarioCriador == papel && escolhaDoUsuarioAceitou == pedra)
         ) {
           desafio.resultado = desafio.esolhaDoUsuarioCriador
         } else {
@@ -197,65 +191,61 @@ export class DesafioController {
         return res.status(201).json(desafio)
       }
 
-      return res
-        .status(404)
-        .json({ message: 'Usuário ou Desafio não encontrado' })
+      return res.status(404).json({ message: Messages.USER_NOT_FOUND })
     } catch (error) {
       console.log(error)
-      return res.status(500).json({ message: 'Internal Server Error' })
+      return res.status(500).json({ message: Messages.INTERNAL_SERVER_ERROR })
     }
   }
 }
 
-function validarAposta(valorDaAposta: number): void {
+function validarAposta (valorDaAposta: number): void {
   if (valorDaAposta < 10 || valorDaAposta > 10000) {
-    throw new Error('O valor da aposta deve estar entre 10 e 10.000')
+    throw new Error(Messages.BET_AMOUNT_INVALID)
   }
 }
 
-function verificarvalorAposta(
+function verificarvalorAposta (
   desafio: Desafio,
   valorDaAposta: number,
-  res: Response,
+  res: Response
 ): boolean {
   if (desafio.valorDaAposta !== valorDaAposta) {
-    res
-      .status(400)
-      .json({ message: 'O valor da aposta não corresponde ao valor original' })
+    res.status(400).json({ message: Messages.BET_NOT_MATCH })
     return false
   }
   return true
 }
 
-async function findUsuario(id: number): Promise<Usuario | null> {
+async function findUsuario (id: number): Promise<Usuario | null> {
   try {
     return await usuarioRepository
       .createQueryBuilder('usuarios')
       .where('usuarios.id = :id', { id })
       .getOne()
   } catch (error) {
-    console.error('Erro ao Informar  usuário:', error)
+    console.error('Error finding user:', error)
     return null
   }
 }
 
-async function findDesafio(id: number): Promise<Desafio | null> {
+async function findDesafio (id: number): Promise<Desafio | null> {
   try {
     return await desafioRepository
       .createQueryBuilder('desafios')
       .where('desafios.id = :id', { id })
       .getOne()
   } catch (error) {
-    console.error('Erro ao Buscar Desafio', error)
+    console.error('Error finding challenge:', error)
     return null
   }
 }
 
-async function execute(): Promise<Desafio[]> {
+async function execute (): Promise<Desafio[]> {
   try {
     return await desafioRepository.find()
   } catch (error) {
-    console.error('Erro ao Buscar Desafio', error)
+    console.error('Error finding challenges', error)
     return []
   }
 }
