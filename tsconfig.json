@@ -4,19 +4,22 @@
     "lib": ["ES2021"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "module": "Node16",
-    "moduleResolution": "Node16",
+    "module": "commonjs",
     "resolveJsonModule": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitAny": false,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
+
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
-  "ts-node": {
-    "files": true
-  }
+  "exclude": ["node_modules", "dist"]
 }
