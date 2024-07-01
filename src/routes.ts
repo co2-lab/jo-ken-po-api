@@ -15,9 +15,15 @@ routes.get('/buscarDesafios', new DesafioController().buscarDesafios)
 routes.get('/usuarioComMaisApostas', (req, res) =>
   desafioController.usuarioComMaisApostas(req, res),
 )
-routes.get('/maioresApostas', (req, res) => desafioController.maioresApostas(req, res))
-routes.get('/maioresGanhadores', (req, res) => desafioController.maioresGanhadores(req, res))
-routes.get('/apostas/:userId', (req, res) => desafioController.consultarApostasPorUsuario(req, res))
+routes.get('/maioresApostas', (req, res) =>
+  desafioController.maioresApostas(req, res),
+)
+routes.get('/maioresGanhadores', (req, res) =>
+  desafioController.maioresGanhadores(req, res),
+)
+routes.get('/apostas/:userId', (req, res) =>
+  desafioController.consultarApostasPorUsuario(req, res),
+)
 routes.post('/usuarios', (req, res) => usuarioController.create(req, res))
 
 function checkToken(req: Request, res: Response, next: NextFunction) {

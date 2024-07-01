@@ -1,5 +1,11 @@
 import { Usuario } from './Usuario'
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 
 @Entity('desafios')
 export class Desafio {
@@ -15,11 +21,11 @@ export class Desafio {
   @Column({ type: 'text', nullable: true })
   escolhaDoUsuarioAceitou?: string
 
-  @ManyToOne(() => Usuario, usuario => usuario.id)
+  @ManyToOne(() => Usuario, (usuario) => usuario.id)
   @JoinColumn({ name: 'id_criador' })
   usuarioCriador: Usuario
 
-  @ManyToOne(() => Usuario, usuario => usuario.id)
+  @ManyToOne(() => Usuario, (usuario) => usuario.id)
   @JoinColumn({ name: 'id_acetou' })
   usuarioAceitou: Usuario
 

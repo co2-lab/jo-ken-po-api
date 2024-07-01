@@ -1,4 +1,10 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 import { Desafio } from './Desafio'
 
 @Entity('usuarios')
@@ -25,10 +31,10 @@ export class Usuario {
   @Column({ type: 'double precision', default: 1000 })
   moeda!: number
 
-  @OneToMany(() => Desafio, desafio => desafio.usuarioCriador)
+  @OneToMany(() => Desafio, (desafio) => desafio.usuarioCriador)
   desafiosCriados!: Desafio[]
 
-  @OneToMany(() => Desafio, desafio => desafio.usuarioAceitou)
+  @OneToMany(() => Desafio, (desafio) => desafio.usuarioAceitou)
   desafiosAceitos!: Desafio[]
 
   constructor(

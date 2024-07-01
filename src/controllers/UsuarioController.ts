@@ -6,15 +6,16 @@ import bcrypt from 'bcrypt' // Adicionar bcrypt para hash de senha
 
 export class UsuarioController {
   async create(req: Request, res: Response): Promise<void> {
-    const { name, date_nasc, cpf, rg, username, password, email } = req.body as {
-      name: string
-      date_nasc: string // Assume que date_nasc é uma string do request
-      cpf: string
-      rg: number
-      username: string
-      password: string
-      email: string
-    }
+    const { name, date_nasc, cpf, rg, username, password, email } =
+      req.body as {
+        name: string
+        date_nasc: string // Assume que date_nasc é uma string do request
+        cpf: string
+        rg: number
+        username: string
+        password: string
+        email: string
+      }
 
     try {
       const hashedPassword = await bcrypt.hash(password, 10) // Gerar hash da senha
@@ -63,7 +64,9 @@ export class UsuarioController {
       }
 
       const token = jwt.sign({ id: usuario.id }, secret)
-      return res.status(200).json({ msg: 'Autenticação realizada com sucesso', token })
+      return res
+        .status(200)
+        .json({ msg: 'Autenticação realizada com sucesso', token })
     } catch (error) {
       console.error('Erro ao autenticar usuário:', error)
       return res.status(500).json({ msg: 'Internal Server Error' })

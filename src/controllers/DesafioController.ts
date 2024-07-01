@@ -30,15 +30,22 @@ export class DesafioController {
     }
   }
 
-  async consultarApostasPorUsuario(req: Request, res: Response): Promise<Response> {
+  async consultarApostasPorUsuario(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
     const { userId } = req.params
     try {
       const usuario = await findUsuario(parseInt(userId))
       if (!usuario) {
         return res.status(404).json({ message: 'Usuário não encontrado' })
       }
-      const apostasCriadas = await desafioRepository.find({ where: { usuarioCriador: usuario } })
-      const apostasAceitas = await desafioRepository.find({ where: { usuarioAceitou: usuario } })
+      const apostasCriadas = await desafioRepository.find({
+        where: { usuarioCriador: usuario },
+      })
+      const apostasAceitas = await desafioRepository.find({
+        where: { usuarioAceitou: usuario },
+      })
 
       const todasApostas = { ...apostasCriadas, ...apostasAceitas }
 
@@ -56,8 +63,12 @@ export class DesafioController {
       let usuarioComMaisApostas: Usuario | null = null
 
       for (const usuario of usuarios) {
-        const apostasCriadas = await desafioRepository.count({ where: { usuarioCriador: usuario } })
-        const apostasAceitas = await desafioRepository.count({ where: { usuarioAceitou: usuario } })
+        const apostasCriadas = await desafioRepository.count({
+          where: { usuarioCriador: usuario },
+        })
+        const apostasAceitas = await desafioRepository.count({
+          where: { usuarioAceitou: usuario },
+        })
         const totalApostas = apostasCriadas + apostasAceitas
 
         if (totalApostas > maxApostas) {
@@ -66,7 +77,9 @@ export class DesafioController {
         }
       }
       if (usuarioComMaisApostas) {
-        return res.status(200).json({ usuario: usuarioComMaisApostas, apostas: maxApostas })
+        return res
+          .status(200)
+          .json({ usuario: usuarioComMaisApostas, apostas: maxApostas })
       } else {
         return res.status(404).json({ message: 'Nenhum usuário Encontrado' })
       }
@@ -118,7 +131,10 @@ export class DesafioController {
     }
   }
 
-  async buscarDesafios(request: Request, response: Response): Promise<Response> {
+  async buscarDesafios(
+    request: Request,
+    response: Response,
+  ): Promise<Response> {
     try {
       const desafios = await execute()
       return response.json(desafios)
@@ -129,7 +145,8 @@ export class DesafioController {
   }
 
   async aceitarDesafio(req: Request, res: Response): Promise<Response> {
-    const { idAceitou, idDesafio, escolhaDoUsuarioAceitou, valorDaAposta } = req.body
+    const { idAceitou, idDesafio, escolhaDoUsuarioAceitou, valorDaAposta } =
+      req.body
     console.log(idAceitou)
 
     try {
@@ -149,23 +166,28 @@ export class DesafioController {
         desafio.escolhaDoUsuarioAceitou = escolhaDoUsuarioAceitou
 
         if (!verificarvalorAposta(desafio, valorDaAposta, res)) {
-          return res
-            .status(400)
-            .json({ message: 'O valor da Aposta não Corresponde ao valor Original' })
+          return res.status(400).json({
+            message: 'O valor da Aposta não Corresponde ao valor Original',
+          })
         }
 
         if (desafio.valorDaAposta !== valorDaAposta) {
-          return res
-            .status(400)
-            .json({ message: ' O valor da Aposta não corresponde ao valor Original' })
+          return res.status(400).json({
+            message: ' O valor da Aposta não corresponde ao valor Original',
+          })
         }
 
-        if (desafio.esolhaDoUsuarioCriador === desafio.escolhaDoUsuarioAceitou) {
+        if (
+          desafio.esolhaDoUsuarioCriador === desafio.escolhaDoUsuarioAceitou
+        ) {
           desafio.resultado = empate
         } else if (
-          (desafio.esolhaDoUsuarioCriador == pedra && escolhaDoUsuarioAceitou == tesoura) ||
-          (desafio.esolhaDoUsuarioCriador == tesoura && escolhaDoUsuarioAceitou == papel) ||
-          (desafio.esolhaDoUsuarioCriador == papel && escolhaDoUsuarioAceitou == pedra)
+          (desafio.esolhaDoUsuarioCriador == pedra &&
+            escolhaDoUsuarioAceitou == tesoura) ||
+          (desafio.esolhaDoUsuarioCriador == tesoura &&
+            escolhaDoUsuarioAceitou == papel) ||
+          (desafio.esolhaDoUsuarioCriador == papel &&
+            escolhaDoUsuarioAceitou == pedra)
         ) {
           desafio.resultado = desafio.esolhaDoUsuarioCriador
         } else {
@@ -175,7 +197,9 @@ export class DesafioController {
         return res.status(201).json(desafio)
       }
 
-      return res.status(404).json({ message: 'Usuário ou Desafio não encontrado' })
+      return res
+        .status(404)
+        .json({ message: 'Usuário ou Desafio não encontrado' })
     } catch (error) {
       console.log(error)
       return res.status(500).json({ message: 'Internal Server Error' })
@@ -189,9 +213,15 @@ function validarAposta(valorDaAposta: number): void {
   }
 }
 
-function verificarvalorAposta(desafio: Desafio, valorDaAposta: number, res: Response): boolean {
+function verificarvalorAposta(
+  desafio: Desafio,
+  valorDaAposta: number,
+  res: Response,
+): boolean {
   if (desafio.valorDaAposta !== valorDaAposta) {
-    res.status(400).json({ message: 'O valor da aposta não corresponde ao valor original' })
+    res
+      .status(400)
+      .json({ message: 'O valor da aposta não corresponde ao valor original' })
     return false
   }
   return true
