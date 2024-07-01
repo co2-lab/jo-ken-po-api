@@ -9,7 +9,7 @@ export class UsuarioController {
     const { name, date_nasc, cpf, rg, username, password, email } = req.body as {
       name: string
       date_nasc: string // Assume que date_nasc é uma string do request
-      cpf: number
+      cpf: string
       rg: number
       username: string
       password: string
@@ -18,10 +18,13 @@ export class UsuarioController {
 
     try {
       const hashedPassword = await bcrypt.hash(password, 10) // Gerar hash da senha
+      const cpfNumber = parseFloat(cpf.replace(/\D/g, ''))
+      const formattedDataNasc = new Date(date_nasc)
+
       const usuario = new Usuario(
         name,
-        new Date(date_nasc),
-        cpf,
+        formattedDataNasc,
+        cpfNumber,
         rg,
         username,
         hashedPassword,
