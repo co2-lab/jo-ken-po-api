@@ -4,11 +4,18 @@
   "main": "index.js",
   "private": true,
   "license": "UNLICENSED",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx lint-staged"
+    }
+  },
   "lint-staged": {
-    "*.{ts,js,json,md}": [
-      "prettier --write",
+    "*.{js,ts,tsx}": [
       "eslint --fix",
-      "git add"
+      "prettier --write"
+    ],
+    "*.{css,scss,html}": [
+      "prettier --write"
     ]
   },
   "scripts": {
