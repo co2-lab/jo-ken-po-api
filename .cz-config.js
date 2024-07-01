@@ -40,5 +40,4 @@ module.exports = {
   skipQuestions: [],
   themeColor: '',
   maxHeaderWidth: 100,
-  editor: 'code',
 }

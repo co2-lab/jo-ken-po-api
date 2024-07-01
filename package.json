@@ -5,6 +5,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "commit": "cz",
     "preinstall": "node preinstall.js",
     "dev": "tsx watch ./src/index.ts dotenv_config_path=.env.local ",
     "migration:generate": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:generate ./src/migrations/default",
@@ -30,11 +31,14 @@
       "prettier --write"
     ]
   },
-  "commitizen": {
-    "path": "./node_modules/cz-customizable"
-  },
-  "cz-customizable": {
-    "config": ".cz-config.js"
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-customizable"
+    },
+    "cz-customizable": {
+      "config": ".cz-config.js",
+      "editor": "code --wait"
+    }
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
